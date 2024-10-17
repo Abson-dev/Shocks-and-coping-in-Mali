@@ -45,6 +45,10 @@ count // 85,430 obs
  
 drop Lcs_crisis_ChildWork Lcs_crisis_HHSeparation Lcs_em_Migration
 
+tab1 Lcs_stress_DomAsset-Lcs_em_FemAnimal
+
+tab1 Lcs_stress_DomAsset-Lcs_em_FemAnimal,nolab
+
 /////////////////////////////////////////////////
 //
 //            food security indicators
@@ -53,6 +57,8 @@ drop Lcs_crisis_ChildWork Lcs_crisis_HHSeparation Lcs_em_Migration
 *2.	We can also convert food security indicators into binary variables:
 *Yes, we can. Again, this fully aligns with the vocabulary and coding conventions of WFP. Depending on the distribution and to assure a sufficient number of observations in each category, the multiple categories could be reduced to binary indicators – if this is required by the econometric approach.
 /*
+
+tab1 FCS - CARI
 
 -> tabulation of FCS  
 
@@ -117,6 +123,76 @@ moderately food insecure |     16,991       19.89       97.78
 -------------------------+-----------------------------------
                    Total |     85,430      100.00
 
+//////////////////////////////////
+
+tab1 FCS - CARI,nolab
+
+-> tabulation of FCS  
+
+   Score de |
+Consommatio |
+          n |
+Alimentaire |
+    (SCA) - |
+  Catégorie |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |      7,543        8.83        8.83
+          2 |     12,867       15.06       23.89
+          3 |     65,020       76.11      100.00
+------------+-----------------------------------
+      Total |     85,430      100.00
+
+-> tabulation of HDDS  
+
+   Score de |
+  Diversité |
+Alimentaire |
+        des |
+    Ménages |
+   (SDAM) - |
+  Catégorie |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     72,662       85.05       85.05
+          2 |      6,914        8.09       93.15
+          3 |      2,960        3.46       96.61
+          4 |      1,348        1.58       98.19
+          5 |      1,546        1.81      100.00
+------------+-----------------------------------
+      Total |     85,430      100.00
+
+-> tabulation of HHS  
+
+     Indice |
+ Domestique |
+ de la Faim |
+    (HHS) - |
+  Catégorie |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     77,482       90.70       90.70
+          2 |      3,549        4.15       94.85
+          3 |      3,957        4.63       99.48
+          4 |        244        0.29       99.77
+          5 |        198        0.23      100.00
+------------+-----------------------------------
+      Total |     85,430      100.00
+
+-> tabulation of CARI  
+
+   Approche |
+ Consolidée |
+    pour le |
+Compte-rend |
+      u des |
+Indicateurs |
+   (CARI) - |
+  Catégorie |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     24,511       28.69       28.69
+          2 |     42,028       49.20       77.89
+          3 |     16,991       19.89       97.78
+          4 |      1,900        2.22      100.00
+------------+-----------------------------------
+      Total |     85,430      100.00
 
 */
 
@@ -125,6 +201,21 @@ label define fcs 1 "poor" 2 "borderline" 3 "acceptable", replace
 label define hdds 1 ">=5 groups" 2 "4 groups" 3 "3 groups" 4 "2 groups" 5 "0-1 groups", replace
 label define hhs 1 "0" 2 "1" 3 "2-3" 4 "4" 5 "5-6", replace
 
+
+/////////////////////////////////////////////////
+//
+//            food security indicators dummy
+////////////////////////////////////////////////
+tabulate  FCS, gen(FCS)
+tabulate  CARI, gen(CARI)
+tabulate  HHS, gen(HHS)
+tabulate  HDDS, gen(HDDS)
+
+
+
+
+////////////////
+/*
 replace FCS=0 if FCS==1
 replace FCS=1 if FCS==2|FCS==3
 
@@ -136,8 +227,17 @@ replace HHS=0 if HHS==2| HHS==3| HHS==4| HHS==5
 
 replace HDDS=1 if HDDS==1
 replace HDDS=0 if HDDS==2|HDDS==3|HDDS==4|HDDS==5
+*/
+tab1 FCS - CARI
 
 
+
+tab1 FCS - CARI, nolab
+
+label define FCS 1 "Yes" 0 "No", replace
+label define CARI 1 "Yes" 0 "No", replace
+label define HHS 1 "Yes" 0 "No", replace
+label define HDDS 1 "Yes" 0 "No", replace
 *3.	Finally, on shocks, let make sure we have both idiosyncratic and systemic shocks. 
 *That seemed to be impossible: there were hardly any questions on idiosyncratic shocks in the WFP surveys. So, most of this will be on systemic shocks. While this is certainly important at the household level, the effect may dissipate at a more aggregate level. That is, idiosyncratic shocks (such as, the prevalence of principal income earners dying from a car accident) might be assumed equal across regions that suffer or do not suffer from a drought shock.
 
@@ -150,13 +250,132 @@ sum zs_maize_inte zs_millet_inte  zs_rice_inte  zs_cowpea_inte zs_peanut_inte zs
 sum R_drought R_flood R_heat R_composite
 
 *Other covariates include:*
+tab1 sex_head area education_head marital_head
+/*
+
+-> tabulation of sex_head  
+
+    Sexe du |
+    chef de |
+     ménage |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       male |     78,932       92.39       92.39
+     female |      6,498        7.61      100.00
+------------+-----------------------------------
+      Total |     85,430      100.00
+
+-> tabulation of area  
+
+  Milieu de |
+  Résidence |      Freq.     Percent        Cum.
+------------+-----------------------------------
+      urban |     18,563       21.73       21.73
+      rural |     66,867       78.27      100.00
+------------+-----------------------------------
+      Total |     85,430      100.00
+
+-> tabulation of education_head  
+
+    Niveau d'éducation du |
+           chef de ménage |      Freq.     Percent        Cum.
+--------------------------+-----------------------------------
+                     none |     38,264       44.79       44.79
+          primary (ecole) |     35,941       42.07       86.86
+         middle (college) |      4,608        5.39       92.25
+        secondary (lycee) |      3,737        4.37       96.63
+higher (university/other) |      2,880        3.37      100.00
+--------------------------+-----------------------------------
+                    Total |     85,430      100.00
+
+-> tabulation of marital_head  
+
+         Situation |
+   matrimoniale du |
+    chef de ménage |      Freq.     Percent        Cum.
+-------------------+-----------------------------------
+            single |        559        0.65        0.65
+           married |     78,965       92.43       93.09
+divorced/separated |        810        0.95       94.03
+         widow(er) |      5,074        5.94       99.97
+        free union |         22        0.03      100.00
+-------------------+-----------------------------------
+             Total |     85,430      100.00
+
+
+*/
+
+tab1 sex_head area education_head marital_head,nolab
+/*
+
+
+-> tabulation of sex_head  
+
+    Sexe du |
+    chef de |
+     ménage |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     78,932       92.39       92.39
+          2 |      6,498        7.61      100.00
+------------+-----------------------------------
+      Total |     85,430      100.00
+
+-> tabulation of area  
+
+  Milieu de |
+  Résidence |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     18,563       21.73       21.73
+          2 |     66,867       78.27      100.00
+------------+-----------------------------------
+      Total |     85,430      100.00
+
+-> tabulation of education_head  
+
+     Niveau |
+ d'éducatio |
+  n du chef |
+  de ménage |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     38,264       44.79       44.79
+          1 |     35,941       42.07       86.86
+          2 |      4,608        5.39       92.25
+          3 |      3,737        4.37       96.63
+          4 |      2,880        3.37      100.00
+------------+-----------------------------------
+      Total |     85,430      100.00
+
+-> tabulation of marital_head  
+
+  Situation |
+matrimonial |
+  e du chef |
+  de ménage |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |        559        0.65        0.65
+          2 |     78,965       92.43       93.09
+          3 |        810        0.95       94.03
+          4 |      5,074        5.94       99.97
+          5 |         22        0.03      100.00
+------------+-----------------------------------
+      Total |     85,430      100.00
+
+*/
+//////////////////////////////////
 replace sex_head=0 if sex_head==2 
+
+
 replace area=0 if area==2
+
+
 replace education_head=1 if education_head==1|education_head==2|education_head==3|education_head==4
 
 replace marital_head=0 if marital_head==1|marital_head==3|marital_head==4|marital_head==5
+
 replace marital_head=1 if marital_head==2
 
+
+
+////////////////////////////
 sum cdi_rainfall cdi_soilmoisture cdi_evapotranspiration sex_head education_head marital_head
 
 drop hhid
